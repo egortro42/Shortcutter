@@ -1,0 +1,2 @@
+# Shortcutter
+Helpful Telegram bot
