@@ -23,9 +23,10 @@ def handle_text(message):
     """
     conn = sqlite3.connect('commands.db')
     c = conn.cursor()
-    c.execute('SELECT * FROM commands WHERE command="' + message.text.lower() + '" OR name="' + message.text.lower() +
-              '" OR command="'+message.text.upper()+'"')
+    if len(message.text) == 1:
+        c.execute('SELECT * FROM commands WHERE command = "' + message.text + '" COLLATE NOCASE')
     c = c.fetchall()
+    conn.close()
 
     if len(c) > 1:
         bot.send_message(message.chat.id, 'По вашему запросу найдено несколько команд ('+str(len(c))+'):')
