@@ -7,6 +7,10 @@ bot = telebot.TeleBot(Const.token)
 reg = re.compile(':*[a-zA-Z]+\s*\+\s*[a-zA-Z]*')
 
 
+def regexp(pattern, in_put):
+    return bool(re.match(pattern, in_put))
+
+
 @bot.message_handler(commands=['start'])
 def start(message):
     if message.from_user.language_code == 'ru-RU':
@@ -24,12 +28,13 @@ def handle_text(message):
         lang = Const.en_text
     """
     conn = sqlite3.connect('commands.db')
+    conn.create_function('regexp', 2, regexp)
     c = conn.cursor()
     if len(message.text) == 1:
-        c.execute('SELECT * FROM commands WHERE command LIKE "' '%' + message.text + '" OR command LIKE "' + message.text + '%' '" COLLATE NOCASE')
+        c.execute('SELECT * FROM commands WHERE command REGEXP "[\s:]*' + message.text + '[\s]*" COLLATE NOCASE')
     elif reg.match(message.text) is not None:
-       print(reg.match(message.text).group())
-       # c.execute('SELECT * FROM commands WHERE command =? COLLATE NOCASE', reg.match(message.text).group())
+        print(reg.match(message.text).group())
+        # c.execute('SELECT * FROM commands WHERE command =? COLLATE NOCASE', reg.match(message.text).group())
     c = c.fetchall()
     conn.close()
 
