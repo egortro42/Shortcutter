@@ -31,10 +31,11 @@ def handle_text(message):
     conn.create_function('regexp', 2, regexp)
     c = conn.cursor()
     if len(message.text) == 1:
-        c.execute('SELECT * FROM commands WHERE command REGEXP "[\s:]*' + message.text + '[\s]*" COLLATE NOCASE')
+        c.execute('SELECT * FROM commands WHERE command REGEXP "[\s:]*[' +
+                  message.text.upper() + '|' + message.text.lower() + '][\s]*"')
     elif reg.match(message.text) is not None:
-        print(reg.match(message.text).group())
-        # c.execute('SELECT * FROM commands WHERE command =? COLLATE NOCASE', reg.match(message.text).group())
+        c.execute('SELECT * FROM commands WHERE command = "' +
+                  re.sub('[\s]*\+[\s]*', ' + ', reg.match(message.text).group()) + '" COLLATE NOCASE')
     c = c.fetchall()
     conn.close()
 
