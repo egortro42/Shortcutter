@@ -27,6 +27,7 @@ def handle_text(message):
     else:
         lang = Const.en_text
     """
+    re.sub('[\s]+', ' ', message.text).strip()
     conn = sqlite3.connect('commands.db')
     conn.create_function('regexp', 2, regexp)
     c = conn.cursor()
